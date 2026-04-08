@@ -4,16 +4,8 @@ macOS system doctor for Claude Code — system info, disk cleanup, and maintenan
 
 ## Install
 
-First, add the marketplace:
-
 ```bash
-claude plugin marketplace add pierrelzw/zhiwei-skills
-```
-
-Then install the plugin:
-
-```bash
-claude plugin install mac-doctor@pierrelzw --scope user
+claude plugin marketplace add pierrelzw/zhiwei-skills && claude plugin install mac-doctor@pierrelzw --scope user
 ```
 
 ## Usage
@@ -40,14 +32,6 @@ Supports bilingual input:
 | system-info | CPU, memory, storage, battery, network overview |
 | disk-clean | Scan for large caches, AI models, app residuals; user-confirmed cleanup |
 | maintenance | DNS flush, Spotlight rebuild, permission repair, and more |
-
-## Migration from symlink install
-
-If you previously installed via symlink (`~/.claude/skills/mac-doctor`), remove it before using the plugin install to avoid duplicate loading:
-
-```bash
-rm ~/.claude/skills/mac-doctor
-```
 
 ## License
 
