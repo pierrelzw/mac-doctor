@@ -32,7 +32,7 @@ sysctl -n hw.memsize
 vm_stat
 ```
 
-Conversion: multiply page counts from `vm_stat` by 4096 to get bytes. Calculate used = total - (free * 4096) - (inactive * 4096). Show used/total in GB (divide by 1073741824).
+Conversion: parse the page size from the first line of `vm_stat` output (e.g., "page size of 16384 bytes"). Multiply page counts by this parsed page size — do NOT hardcode 4096 (Apple Silicon uses 16384). Calculate used = total - (free_pages × page_size). Do not subtract inactive pages — inactive memory is reclaimable but still in use. Show used/total in GB (divide by 1073741824).
 
 ### Storage Overview
 
@@ -56,8 +56,18 @@ uptime
 
 ### Network
 
+First detect the active network service:
+
 ```bash
-networksetup -getinfo Wi-Fi
+networksetup -listallnetworkservices
+```
+
+Then query the first active service (try Wi-Fi first, fall back to Ethernet or other available services). If no service is available, show "No active network connection".
+
+```bash
+networksetup -getinfo "Wi-Fi"
+# If Wi-Fi fails or doesn't exist, try:
+# networksetup -getinfo "Ethernet"
 ```
 
 ## Output Format
@@ -74,7 +84,7 @@ Present all results in a single table:
 | Memory          | X.X GB used / X.X GB total   |
 | CPU Usage       | user% user, sys% sys, idle%  |
 | Storage         | X.X GB free / X.X GB total   |
-| Battery         | Condition, Cycle Count, Max% |
+| Battery         | Condition, Cycle Count, Max% (omit this row entirely on desktops) |
 | Uptime          | ...                          |
 | Network (Wi-Fi) | IP, subnet, router           |
 ```

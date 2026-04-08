@@ -6,11 +6,13 @@ Scan disk usage, identify cleanable items, and help the user reclaim space safel
 
 ### 1.1 Check available space
 
-Use `diskutil info /` to get accurate APFS container-level free space. Record `Container Free Space` as the baseline — this is more reliable than `df` which can be misleading on APFS snapshot volumes.
+Use `diskutil info /` to get accurate free space. Record free space as the baseline.
 
 ```bash
-diskutil info / | grep -E "Container (Free|Total) Space"
+diskutil info / | grep -E "Container (Free|Total) Space|Volume (Free|Total) Space"
 ```
+
+On APFS volumes, use `Container Free Space` / `Container Total Space`. On HFS+ volumes (older Macs), these fields are absent — fall back to `Volume Free Space` / `Volume Total Space` instead.
 
 ### 1.2 Scan large directories
 
@@ -67,7 +69,7 @@ echo "Optimize Mac Storage: $optimize (1=enabled, 0=disabled)"
 
 # Check for large locally-downloaded iCloud files that could be evicted
 # Files with no .icloud extension are downloaded locally
-find ~/Documents -maxdepth 3 -size +500M -not -name "*.icloud" 2>/dev/null | head -10
+find ~/Documents -xdev -maxdepth 3 -size +500M -not -name "*.icloud" 2>/dev/null | head -10
 ```
 
 Note: there is no CLI command to evict iCloud files. If suggesting iCloud eviction, tell the user to right-click the folder in Finder and uncheck "Keep Downloaded".
@@ -109,9 +111,11 @@ If optimize storage is enabled, mention large local files in iCloud-synced direc
 
 Wait for user to choose what to clean. Then:
 
-1. Execute cleanup commands for selected items
-2. After cleanup, re-check space with `diskutil info /`
-3. Report before/after comparison: how much free space was gained
+1. Show the user the exact commands that will be run and the estimated space to be reclaimed
+2. Wait for final confirmation before executing
+3. Execute cleanup commands for selected items
+4. After cleanup, re-check space with `diskutil info /`
+5. Report before/after comparison: how much free space was gained
 
 ### Quick clean commands reference
 
@@ -119,7 +123,7 @@ Wait for user to choose what to clean. Then:
 # Package manager caches
 pip3 cache purge
 npm cache clean --force
-brew cleanup
+rm -rf ~/Library/Caches/Homebrew/
 conda clean --all -y
 
 # HuggingFace transfer cache
@@ -139,7 +143,7 @@ Note: Google Chrome cache may require Chrome to be quit first due to file locks.
 
 ## Important rules
 
-- Never delete anything without user confirmation, except when user explicitly says "delete all safe caches"
+- Never delete anything without user confirmation — always confirm each category individually, even if user says "delete all"
 - Always report the before/after free space delta using `diskutil info /`
 - When unsure if something is safe to delete, research it first (check if the app is still installed, if the command/binary exists, etc.)
 - For items you're not confident about, say so — don't guess
