@@ -25,7 +25,7 @@ modules/
 **End-user** (via plugin marketplace):
 
 ```bash
-claude plugin marketplace add pierrelzw/zhiwei_skills
+claude plugin marketplace add pierrelzw/zhiwei-skills
 claude plugin install mac-doctor@pierrelzw --scope user
 ```
 
@@ -45,7 +45,7 @@ Plugin metadata lives in `.claude-plugin/plugin.json`. This is the canonical ver
 **Version bump workflow**:
 
 1. Update `version` in `.claude-plugin/plugin.json`
-2. Sync the version in `~/codes/zhiwei_skills/.claude-plugin/marketplace.json` (mac-doctor entry)
+2. Sync the version in `~/codes/zhiwei-skills/.claude-plugin/marketplace.json` (mac-doctor entry)
 3. Validate: `claude plugin validate .claude-plugin/plugin.json`
 4. Commit and push both repos
 
@@ -66,4 +66,17 @@ Manual verification only — no automated test framework:
 3. No args: `/mac-doctor` → all modules in summary mode
 4. Disk cleanup: full scan → categorized report → user selection → cleanup → before/after comparison
 5. Maintenance: diagnostics → repair options → per-operation confirmation → execution
+
+## Evaluation
+
+`evals/` 目录包含自动评测框架，用于 skill 修改前后的效果对比。
+
+- `evals/criteria.md` — 7 个评分维度 + 8 个测试场景的评测标准
+- `evals/results/` — 历史评测结果（按 `<date>-<git-hash>.md` 命名）
+
+**使用方法**：修改 skill 后，告诉 Claude "评测一下"。Claude 会：
+
+1. 读取所有 skill 文件，对照 `criteria.md` 逐项打分
+2. 保存结果到 `evals/results/`
+3. 与上次评测结果自动对比，报告改善/退步
 

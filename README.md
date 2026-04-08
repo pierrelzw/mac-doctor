@@ -7,7 +7,7 @@ macOS system doctor for Claude Code — system info, disk cleanup, and maintenan
 First, add the marketplace:
 
 ```bash
-claude plugin marketplace add pierrelzw/zhiwei_skills
+claude plugin marketplace add pierrelzw/zhiwei-skills
 ```
 
 Then install the plugin:
