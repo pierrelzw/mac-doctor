@@ -46,7 +46,7 @@ diskutil info / | grep -E "Container (Free|Total) Space"
 system_profiler SPPowerDataType | grep -E "Cycle Count|Condition|Maximum Capacity"
 ```
 
-Skip battery on desktops: if `sysctl -n hw.model` contains "Mac" but not "Book" (iMac, Mac Pro, Mac mini, Mac Studio), omit battery entirely.
+Skip battery on desktops: run `system_profiler SPPowerDataType` and check if the output contains "Battery Information". If it does, include battery stats. If not (desktops like iMac, Mac Pro, Mac mini, Mac Studio), omit battery entirely.
 
 ### Uptime
 

@@ -49,7 +49,7 @@ Look for Application Support directories where the app is no longer installed:
 # List app support dirs and check if corresponding .app exists
 for dir in ~/Library/Application\ Support/*/; do
   name=$(basename "$dir")
-  if ! ls /Applications/"$name"* /Applications/"$name".app ~/Applications/"$name"* 2>/dev/null | head -1 > /dev/null 2>&1; then
+  if ! ls /Applications/ ~/Applications/ 2>/dev/null | grep -qi "$name"; then
     size=$(du -sh "$dir" 2>/dev/null | cut -f1)
     echo "$size	$name (possibly orphaned)"
   fi
@@ -144,7 +144,7 @@ Note: Google Chrome cache may require Chrome to be quit first due to file locks.
 - When unsure if something is safe to delete, research it first (check if the app is still installed, if the command/binary exists, etc.)
 - For items you're not confident about, say so — don't guess
 - Do not use `brctl evict` — it does not exist. iCloud eviction is Finder-only.
-  - Do not use `df -h` for free space reporting — it can be misleading on APFS. Use `diskutil info /` instead.
+- Do not use `df -h` for free space reporting — it can be misleading on APFS. Use `diskutil info /` instead.
 
 ## Summary Mode
 

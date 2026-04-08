@@ -14,10 +14,10 @@ macOS system doctor: diagnose, clean, and maintain your Mac.
 
 ## Language Rule
 
-Detect the language of $ARGUMENTS (or the user's latest message if $ARGUMENTS is empty).
+Detect the language of $ARGUMENTS. If $ARGUMENTS is empty, detect from the user's message that triggered this skill invocation.
 
 - Chinese input (any variant) → respond entirely in Chinese
-- All other languages → respond in English
+- All other languages or ambiguous → respond in English
 
 Apply this language choice throughout the entire session.
 
@@ -29,7 +29,7 @@ Parse $ARGUMENTS and route to the matching module:
 |----------|--------|
 | disk, 磁盘, clean, storage, 存储, 空间 | disk-clean |
 | info, 系统, status, 信息, overview | system-info |
-| maintain, 维护, fix, dns, spotlight, repair | maintenance |
+| maintain, 维护, dns, spotlight, repair | maintenance |
 | all, 全面, checkup, 体检, OR empty $ARGUMENTS | all modules (summary mode) |
 
 Match is case-insensitive and partial (e.g., "磁盘满了" contains "磁盘" → disk-clean).

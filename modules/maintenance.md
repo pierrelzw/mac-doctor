@@ -17,13 +17,14 @@ Flag if disabled — this is unusual and potentially risky.
 ### Login Items
 Command: `osascript -e 'tell application "System Events" to get the name of every login item'`
 List all items. Flag if count exceeds 10.
+Note: On macOS 13+ (Ventura), this command may fail with error -10827 if the terminal lacks Automation permission. If it fails, tell the user to check System Settings > General > Login Items directly.
 
 ### Recent Crash Logs
 Command: `ls -lt ~/Library/Logs/DiagnosticReports/ 2>/dev/null | head -10`
 Show recent crashes. Highlight any from the last 24 hours.
 
 ### System Log Errors (last hour)
-Command: `log show --last 1h --predicate 'eventType == logEvent AND logType == error' --style compact | tail -20`
+Command: `/usr/bin/log show --last 1h --predicate 'eventType == logEvent AND logType == error' --style compact | tail -20`
 Summarize: count of errors, top recurring messages.
 
 ## Part 2: Repairs
@@ -35,7 +36,7 @@ Present available repairs as a numbered menu. Execute ONLY after user selects an
 2. Rebuild Spotlight Index — `sudo mdutil -E /` — Low risk but time-consuming — useful when search not finding files
 3. Rebuild Launch Services Database — `/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user` — Low risk — useful when wrong app opens for file types
 4. Clear Font Cache — `sudo atsutil databases -remove` — Low risk, may require restart — useful for font rendering issues
-5. Repair Disk Permissions — `diskutil repairPermissions /` — Low risk — ONLY works on macOS < 10.15 (Mojave and earlier). Check `sw_vers` before offering this option. On Catalina+ this is handled automatically.
+5. Repair Disk Permissions — `diskutil repairPermissions /` — Low risk — ONLY works on macOS <= 10.11 (El Capitan and earlier). Apple removed the underlying mechanism in 10.12 Sierra. Check `sw_vers -productVersion` before offering this option. On Sierra+ this is handled automatically by the system and the command is a no-op.
 
 ## Rules
 - Every sudo command requires explicit user confirmation before execution

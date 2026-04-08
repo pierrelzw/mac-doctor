@@ -32,7 +32,7 @@ ln -s ~/codes/mac-doctor ~/.claude/skills/mac-doctor
 - **Never delete files without explicit user confirmation** — disk-clean module must wait for user selection before executing any cleanup.
 - **All `sudo` operations require user confirmation before execution** — maintenance repairs are executed one at a time with individual confirmation.
 - Use `diskutil info /` instead of `df -h` for storage info.
-- Mark macOS version compatibility where relevant (e.g., `diskutil repairPermissions` only works on macOS < 10.15).
+- Mark macOS version compatibility where relevant (e.g., `diskutil repairPermissions` only works on macOS <= 10.11).
 - When uncertain about a file/directory's purpose, label it as uncertain rather than guessing.
 
 ## Testing
