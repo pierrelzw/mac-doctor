@@ -1,0 +1,10 @@
+{
+  "name": "mac-doctor",
+  "version": "0.1.0",
+  "description": "macOS system doctor — system info, disk cleanup, and maintenance",
+  "author": { "name": "pierrelzw" },
+  "repository": "https://github.com/pierrelzw/mac-doctor",
+  "license": "MIT",
+  "keywords": ["macos", "system", "cleanup", "disk", "maintenance", "diagnostics"],
+  "skills": ["./"]
+}
