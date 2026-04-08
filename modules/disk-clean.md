@@ -32,16 +32,38 @@ du -sh ~/Library/Caches/*/  2>/dev/null | sort -rh | head -15
 du -sh ~/Library/Application\ Support/*/  2>/dev/null | sort -rh | head -15
 ```
 
-### 1.3 Drill into known space hogs
+### 1.3 Drill into large items from 1.2
 
-Check these common large items in parallel:
+For each large directory found in 1.2, drill one level deeper to identify what's inside:
 
-- **Ollama models**: `ollama list`
-- **HuggingFace cache**: `du -sh ~/.cache/huggingface/hub/*/ ~/.cache/huggingface/xet/ 2>/dev/null | sort -rh`
-- **npm cache**: `du -sh ~/.npm/_cacache/ 2>/dev/null`
-- **pip cache**: `pip3 cache info 2>/dev/null`
-- **conda cache**: `du -sh ~/miniconda3/pkgs/ 2>/dev/null`
-- **Homebrew cache**: `du -sh ~/Library/Caches/Homebrew/ 2>/dev/null`
+```bash
+# For each large item from 1.2, drill into subdirectories
+du -sh <large-dir>/*/ 2>/dev/null | sort -rh | head -10
+```
+
+Additionally, scan these locations that 1.2 may miss:
+
+```bash
+# Containers (sandboxed apps like WeChat, QQ, etc.)
+du -sh ~/Library/Containers/*/ 2>/dev/null | sort -rh | head -15
+
+# Trash
+du -sh ~/.Trash/ 2>/dev/null
+
+# iOS device backups
+du -sh ~/Library/Application\ Support/MobileSync/Backup/ 2>/dev/null
+```
+
+For items that need CLI commands for detailed breakdown, check if the tool exists first:
+
+```bash
+# Only run these if the command exists
+command -v ollama &>/dev/null && ollama list
+command -v docker &>/dev/null && docker system df 2>/dev/null
+command -v pip3 &>/dev/null && pip3 cache info 2>/dev/null
+```
+
+Analyze all results and identify what each large item is. Use your knowledge of macOS app data locations to determine the app name, whether it's a cache (auto-rebuilds) or user data (irreplaceable), and whether the app is still installed.
 
 ### 1.4 Detect orphaned app data
 
@@ -76,32 +98,19 @@ Note: there is no CLI command to evict iCloud files. If suggesting iCloud evicti
 
 ## Phase 2: Report
 
-Present findings in a table grouped by safety level. Always show size and what it is.
+Present findings in a table grouped by safety level. Always show size and what it is. Only list items that were actually found during scanning.
 
 ### Category: Safe to delete (caches that auto-rebuild)
 
-These can be deleted without any data loss:
+Items in `~/Library/Caches/`, package manager caches, build caches, transfer caches, logs, and Trash. These regenerate automatically when the app runs again. Use your knowledge to classify — a directory named `Cache`, `Caches`, `tmp`, `logs`, `DerivedData`, `_cacache`, or similar is almost always safe.
 
-- pip cache (`pip3 cache purge`)
-- npm cache (`npm cache clean --force`)
-- Homebrew cache (`rm -rf ~/Library/Caches/Homebrew/`)
-- conda cache (`conda clean --all -y`)
-- HuggingFace xet transfer cache (`~/.cache/huggingface/xet/`)
-- Browser caches (Google, Firefox, Edge, Brave in `~/Library/Caches/`)
-- App update caches (\*.ShipIt directories, \*-updater directories)
-- Playwright browsers (`~/Library/Caches/ms-playwright/`)
+### Category: Review before deleting (data won't auto-rebuild but may not be needed)
 
-### Category: Review before deleting (data won't auto-rebuild)
-
-- AI models (Ollama, HuggingFace, MacWhisper) — user may still need some
-- App data for apps still in use (Spotify offline, streaming caches)
-- Large datasets in `~/.cache/huggingface/hub/datasets--*`
+Downloaded content the user chose to cache locally: AI models, offline music/podcasts, game assets, old iOS device backups, Docker images. The data can be re-downloaded, but the user may want to keep some of it.
 
 ### Category: Caution (user data, could be important)
 
-- Documents, Downloads, Movies
-- Application databases
-- Project directories
+Chat history, recordings, project files, documents, mail, photos — anything that represents the user's own content rather than a cache of externally available data. These should never be suggested for deletion without clear justification.
 
 ### iCloud optimization opportunities
 
@@ -117,29 +126,21 @@ Wait for user to choose what to clean. Then:
 4. After cleanup, re-check space with `diskutil info /`
 5. Report before/after comparison: how much free space was gained
 
-### Quick clean commands reference
+### Cleanup approach
 
-```bash
-# Package manager caches
-pip3 cache purge
-npm cache clean --force
-rm -rf ~/Library/Caches/Homebrew/
-conda clean --all -y
+For each item the user selects, construct the appropriate cleanup command based on what the item is:
 
-# HuggingFace transfer cache
-rm -rf ~/.cache/huggingface/xet/
+- **Caches in `~/Library/Caches/`**: `rm -rf <path>` (safe, they rebuild)
+- **Package manager caches**: use the tool's own purge command when available (e.g., `pip3 cache purge`, `npm cache clean --force`, `conda clean --all -y`), fall back to `rm -rf` for the cache directory
+- **AI models**: use the tool's removal command (e.g., `ollama rm <model>`) so the registry stays consistent
+- **Docker**: `docker system prune` (with appropriate flags based on what user wants to remove)
+- **Trash**: `rm -rf ~/.Trash/*`
+- **Logs**: `rm -rf ~/Library/Logs/*`
+- **User data** (chat files, recordings, project files): never delete via CLI — show the path and tell the user to review in Finder
 
-# Ollama model removal
-ollama rm <model-name>
-
-# Browser caches (safe, auto-rebuild)
-rm -rf ~/Library/Caches/Google/
-rm -rf ~/Library/Caches/Firefox/
-rm -rf ~/Library/Caches/Microsoft\ Edge/
-rm -rf ~/Library/Caches/BraveSoftware/
-```
-
-Note: Google Chrome cache may require Chrome to be quit first due to file locks.
+Notes:
+- Browser caches may require the browser to be quit first due to file locks.
+- For iOS device backups, show the path and let the user delete specific backups in Finder.
 
 ## Important rules
 
