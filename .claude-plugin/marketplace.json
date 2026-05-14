@@ -1,0 +1,31 @@
+{
+  "name": "mac-doctor",
+  "owner": {
+    "name": "pierrelzw"
+  },
+  "metadata": {
+    "description": "Single-plugin marketplace for mac-doctor"
+  },
+  "plugins": [
+    {
+      "name": "mac-doctor",
+      "source": "./.",
+      "description": "macOS system doctor — system info, disk cleanup, and maintenance",
+      "version": "0.1.0",
+      "author": {
+        "name": "pierrelzw"
+      },
+      "repository": "https://github.com/pierrelzw/mac-doctor",
+      "license": "MIT",
+      "keywords": [
+        "macos",
+        "system",
+        "cleanup",
+        "disk",
+        "maintenance",
+        "diagnostics"
+      ],
+      "category": "system"
+    }
+  ]
+}
