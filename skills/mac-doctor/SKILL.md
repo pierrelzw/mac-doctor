@@ -52,15 +52,15 @@ Match is case-insensitive and partial (e.g., "磁盘满了" contains "磁盘" �
 Read the matched module file and follow its full instructions:
 
 ```bash
-cat ${CLAUDE_SKILL_DIR}/modules/<module-name>.md
+cat ${CLAUDE_PLUGIN_ROOT}/skills/mac-doctor/modules/<module-name>.md
 ```
 
 ### Full checkup (all modules, or empty $ARGUMENTS)
 
 Run all three modules in **summary mode** (each module defines what summary mode means):
 
-1. Read and execute `${CLAUDE_SKILL_DIR}/modules/system-info.md` (summary mode)
-2. Read and execute `${CLAUDE_SKILL_DIR}/modules/disk-clean.md` (summary mode)
-3. Read and execute `${CLAUDE_SKILL_DIR}/modules/maintenance.md` (summary mode)
+1. Read and execute `${CLAUDE_PLUGIN_ROOT}/skills/mac-doctor/modules/system-info.md` (summary mode)
+2. Read and execute `${CLAUDE_PLUGIN_ROOT}/skills/mac-doctor/modules/disk-clean.md` (summary mode)
+3. Read and execute `${CLAUDE_PLUGIN_ROOT}/skills/mac-doctor/modules/maintenance.md` (summary mode)
 
 Present a unified report with three sections. End with an overall health assessment.
